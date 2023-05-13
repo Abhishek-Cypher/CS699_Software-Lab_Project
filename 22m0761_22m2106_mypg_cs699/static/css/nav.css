@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+.navbar
+{   
+    z-index: 100000;
+    transition: all 0.25s;
+}
+.navbar:hover
+{
+    opacity: 1;
+    transition: all 0.25s;
+}
+.navbar-nav a{
+    margin-right: 1.2rem;
+    transition: all 0.25s;
+}
+.navbar-nav a:hover{
+    transform: scale(1.1);
+    transition: all 0.25s;
+}
+
+.navbar-nav
+{
+    width: fit-content;
+    margin: auto auto;
+}

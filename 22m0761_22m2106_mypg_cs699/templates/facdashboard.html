@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../static/css/facdashboard.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <title>Dashboard - Faculty</title>
+</head>
+
+<body>
+    <!--Navigation bar-->
+    <div id="nav-placeholder" style="position: fixed; top: 0; width: 100vw; height: fit-content; z-index: 99999 !important;"></div>
+
+    <script>
+        $(function () {
+            $("#nav-placeholder").load("{{url_for('nav')}}");
+        });
+    </script>
+    <!--end of Navigation bar-->
+
+    <div id="container">
+        <div id="buttons-div" style="margin-top: 4rem;">
+            <a class="btn btn-outline-dark buttons" data-target=".div1">Create New Project</a>
+            <a class="btn btn-outline-dark buttons" data-target=".div2">Review Applications</a>
+        </div>
+
+        <div id="content">
+            <div class="div1 divs" style="display: none;">
+                <form action="{{url_for('submitProject')}}" class="formip" method="post">
+                    <div>
+                        <h1 id="welcome" style="font-size: 2rem;">Enter the Project details</h1>
+                    </div>
+                    <div class="mb-3" style="display: none;">
+                        <label for="exampleInputName1" class="form-label">Project title</label>
+                        <input class="form-control" name="facid" type="text" value="{{facid.userid}}" aria-label="default input example">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Project title</label>
+                        <input class="form-control" name="proj.title" type="text" aria-label="default input example"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Enter guide names (seperated by commas)</label>
+                        <input class="form-control" name="proj.facultyname" type="text"
+                            aria-label="default input example" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Stream</label>
+                        <input class="form-control" name="proj.stream" type="text" aria-label="default input example"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Description</label>
+                        <input class="form-control" name="proj.description" type="text"
+                            aria-label="default input example" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Maximum number of students required</label>
+                        <input class="form-control" name="proj.maxnostu" type="text" aria-label="default input example"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputName1" class="form-label">Requisites</label>
+                        <input class="form-control" name="proj.requisites" type="text"
+                            aria-label="default input example" required>
+                    </div>
+
+                    <div id="buttons-div">
+                        <button type="submit" class="btn btn-outline-success buttons" id="submitForm">Submit</button>
+                        <button type="reset" class="btn btn-outline-danger buttons">Reset</button>
+                    </div>
+                </form>
+            </div>
+            <script>
+                $("#submitForm").click(function () {
+                    alert("Project created successfully!");
+                });
+            </script>
+
+            <div class="div2 divs" style="display: none;">
+                <div>
+                    <h1 id="welcome" style="font-size: 2rem;">Applications received for your Projects</h1>
+                </div>
+                <!-- <form action="{{url_for('shortlist_student')}}" style="width: 90vw;" method="post"> -->
+                {% for projects in facid.proid %}
+                <div class="card" id="{{projects.pid}}" style="margin-bottom: 1rem;">
+                    <div class="card-header bg-primary">
+                        <span style="color: white; font-size: 1.2rem">Title: {{projects.title}}</span>
+                    </div>
+                    {% for stud in projects.users %}
+                    <form action="{{url_for('shortlist_student')}}" method="post">
+                    {% if soparray[(projects.pid,stud.userid)][1]==0 %}
+                    <div class="card-body" id="{{stud.userid}}" style="padding: 0.2rem 0.5rem;">
+                        Student name: {{stud.name}}<br>
+                        Student email: {{stud.email}}<br>
+                        Academic division: {{stud.academicdiv}}<br>
+                        Semester wise marks:
+                        {{stud.sem1marks}},{{stud.sem2marks}},{{stud.sem3marks}},{{stud.sem4marks}},{{stud.sem5marks}},{{stud.sem6marks}},{{stud.sem7marks}},{{stud.sem8marks}},{{stud.sem9marks}},{{stud.sem10marks}}<br>
+                        Skills: {{stud.skills}}<br>
+                        SOP : {{ soparray[(projects.pid,stud.userid)][0] }}<br>
+                        <input type="hidden" name="studid" value="{{stud.userid}}">
+                        <input type="hidden" name="projectid" value="{{projects.pid}}">
+                        <input type="hidden" name="facid" value="{{facid.userid}}">
+                        <button type="submit" class="btn btn-sm btn-outline-success" style="margin: 0.5rem; margin-bottom: 1rem;">Shortlist Student</button>
+                    </div>
+                    {% else %}
+                    <div class="card-body" id="{{stud.userid}}" style="padding: 0.2rem 0.5rem;">
+                        Student name: {{stud.name}}<br>
+                        Student email: {{stud.email}}<br>
+                        Academic division: {{stud.academicdiv}}<br>
+                        Semester wise marks:
+                        {{stud.sem1marks}},{{stud.sem2marks}},{{stud.sem3marks}},{{stud.sem4marks}},{{stud.sem5marks}},{{stud.sem6marks}},{{stud.sem7marks}},{{stud.sem8marks}},{{stud.sem9marks}},{{stud.sem10marks}}<br>
+                        Skills: {{stud.skills}}<br>
+                        SOP : {{ soparray[(projects.pid,stud.userid)][0] }}<br>
+                        <input type="hidden" name="studid" value="{{stud.userid}}">
+                        <input type="hidden" name="projectid" value="{{projects.pid}}">
+                        <input type="hidden" name="facid" value="{{facid.userid}}">
+                        <button type="button" class="btn btn-sm btn-outline-success" style="margin: 0.5rem; margin-bottom: 1rem;color: green">Shortlisted</button>
+                    </div>
+                    {% endif %}
+                </form>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            $('.buttons').on('click', function () {
+                var target = $(this).data('target');
+                $('.divs').not(target).slideUp();
+                $(target).slideDown();
+            });
+        });
+    </script>
+
+
+</body>
